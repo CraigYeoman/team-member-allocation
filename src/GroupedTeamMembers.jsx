@@ -1,55 +1,104 @@
-import {useState} from 'react';
+import { useState } from "react";
+import uniqid from "uniqid";
 
+const GroupedTeamMembers = ({ employees, selectedTeam, setTeam }) => {
+  const [groupedEmployees, setGroupedData] = useState(groupTeamMembers());
 
-const GroupedTeamMembers = ({employees, selectedTeam, setTeam}) => {
+  function groupTeamMembers() {
+    const teams = [];
 
-    const [groupedEmployees, setGroupedDate] = useState(groupTeamMembers());
+    const teamAMembers = employees.filter(
+      (employee) => employee.teamName === "TeamA"
+    );
+    const teamA = {
+      team: "TeamA",
+      members: teamAMembers,
+      collapsed: selectedTeam === "TeamA" ? false : true,
+    };
+    teams.push(teamA);
 
-    function groupTeamMembers() {
-        const teams = [];
+    const teamBMembers = employees.filter(
+      (employee) => employee.teamName === "TeamB"
+    );
+    const teamB = {
+      team: "TeamB",
+      members: teamBMembers,
+      collapsed: selectedTeam === "TeamB" ? false : true,
+    };
+    teams.push(teamB);
 
-        const teamAMembers = employees.filter((employee) => employee.teamName === 'TeamA');
-        const teamA = {
-            team: 'TeamA',
-            members:teamAMembers, 
-            collapsed: selectedTeam === 'TeamA' ? false:true
-            };
-            teams.push(teamA);
+    const teamCMembers = employees.filter(
+      (employee) => employee.teamName === "TeamC"
+    );
+    const teamC = {
+      team: "TeamC",
+      members: teamCMembers,
+      collapsed: selectedTeam === "TeamC" ? false : true,
+    };
+    teams.push(teamC);
 
-            const teamBMembers = employees.filter((employee) => employee.teamName === 'TeamB');
-            const teamB = {
-                team: 'TeamB',
-                members:teamBMembers, 
-                collapsed: selectedTeam === 'TeamB' ? false:true
-                };
-                teams.push(teamB);
+    const teamDMembers = employees.filter(
+      (employee) => employee.teamName === "TeamD"
+    );
+    const teamD = {
+      team: "TeamD",
+      members: teamDMembers,
+      collapsed: selectedTeam === "TeamD" ? false : true,
+    };
+    teams.push(teamD);
 
-            const teamCMembers = employees.filter((employee) => employee.teamName === 'TeamC');
-            const teamC = {
-                team: 'TeamC',
-                members:teamCMembers, 
-                collapsed: selectedTeam === 'TeamC' ? false:true
-                };
-                teams.push(teamC);
+    return teams;
+  }
 
-            const teamDMembers = employees.filter((employee) => employee.teamName === 'TeamD');
-            const teamD = {
-                team: 'TeamD',
-                members:teamDMembers, 
-                collapsed: selectedTeam === 'TeamD' ? false:true
-                };
-                teams.push(teamD);
-}
+  function handleTeamClick(event) {
+    const transformedGroupData = groupedEmployees.map((groupedData) =>
+      groupedData.team === event.currentTarget.id
+        ? { ...groupedData, collapsed: !groupedData.collapsed }
+        : groupedData
+    );
+    setGroupedData(transformedGroupData);
+    setTeam(event.currentTarget.id);
+  }
 
+  return (
+    <main className="container">
+      {groupedEmployees.map((item) => {
         return (
-            <footer className="container">
-                <div className="row justify-content-center mt-3 mb-4">
-                    <div className="col-8">
-                        <h1> Grouped Team Members</h1>
-                    </div>
-                </div>
-            </footer>
-        )
-    }
-    
-    export default  GroupedTeamMembers
+          <div
+            className="card mt-2"
+            key={item.team}
+            style={{ cursor: "pointer" }}
+          >
+            <h4
+              id={item.team}
+              className="card-header text-secondary bg-white"
+              onClick={handleTeamClick}
+            >
+              Team Name : {item.team}
+            </h4>
+            <div
+              id={"collapse_" + item.team}
+              className={item.collapsed === true ? "collapse" : ""}
+            >
+              <hr />
+              {item.members.map((member) => {
+                return (
+                  <div key={uniqid()} className="mt-2">
+                    <h5 className="card-title mt-2">
+                      <span className="text-dark">
+                        Full Name: {member.fullName}
+                      </span>
+                    </h5>
+                    <p>Designation: {member.designation}</p>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </main>
+  );
+};
+
+export default GroupedTeamMembers;
